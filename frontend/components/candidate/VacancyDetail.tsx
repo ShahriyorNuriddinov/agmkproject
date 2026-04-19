@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Eye, Users, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useVacancy } from '@/hooks/useVacancies';
-import { useApplyToJob } from '@/hooks/useApplications';
+import { useApplyToJob, useMyApplications } from '@/hooks/useApplications';
 import { useProfile, isProfileComplete } from '@/hooks/useProfile';
 import { StatusBadge } from '@/components/StatusBadge';
 import { FileUpload } from '@/components/FileUpload';
@@ -25,6 +25,8 @@ export function VacancyDetail({ id: propId }: { id?: string }) {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   const { data: profile } = useProfile(user?.id);
+  const { data: myApplications = [] } = useMyApplications(user?.id);
+  const alreadyApplied = myApplications.some(a => String(a.vacancyId) === String(id));
 
   const { data: vacancy, isLoading } = useVacancy(id, user?.id);
 
@@ -66,18 +68,24 @@ export function VacancyDetail({ id: propId }: { id?: string }) {
             <p className="text-muted-foreground">{vacancy.hr?.fullName}</p>
           </div>
           {vacancy.status === 'OPEN' && (
-            <Button
-              onClick={() => {
-                if (!isProfileComplete(profile)) {
-                  router.push('/candidate/profile');
-                  return;
-                }
-                setIsModalOpen(true);
-              }}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground"
-            >
-              Ariza yuborish
-            </Button>
+            alreadyApplied ? (
+              <Button disabled className="bg-secondary text-muted-foreground cursor-not-allowed">
+                ✓ Ariza topshirilgan
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  if (!isProfileComplete(profile)) {
+                    router.push('/candidate/profile');
+                    return;
+                  }
+                  setIsModalOpen(true);
+                }}
+                className="bg-accent hover:bg-accent/90 text-accent-foreground"
+              >
+                Ariza yuborish
+              </Button>
+            )
           )}
         </div>
 
