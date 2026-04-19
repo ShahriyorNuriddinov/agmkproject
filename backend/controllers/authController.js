@@ -5,14 +5,9 @@ const User = require("../models/User");
 exports.register = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
-    const role = "CANDIDATE"
+    const role = "CANDIDATE";
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({
-      fullName,
-      email,
-      password: hashedPassword,
-      role,
-    });
+    const newUser = await User.create({ fullName, email, password: hashedPassword, role });
     res.status(201).json({ message: "Success", user: newUser });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -23,21 +18,11 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
-    if (!user)
-      return res.status(404).json({ error: "Foydalanuvchi topilmadi" });
-
+    if (!user) return res.status(404).json({ error: "Foydalanuvchi topilmadi" });
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Parol xato" });
-
-    const token = jwt.sign(
-      { id: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" },
-    );
-    res.json({
-      token,
-      user: { id: user.id, fullName: user.fullName, role: user.role },
-    });
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    res.json({ token, user: { id: user.id, fullName: user.fullName, role: user.role } });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -47,12 +32,10 @@ exports.checkEmail = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return res.status(404).json({ error: "Bu email yo'q" });
-    }
+    if (!user) return res.status(404).json({ error: "Bu email yo'q" });
     res.json({ message: "Email bor", exist: true });
   } catch (error) {
-    (res.status(500).json({ error: error.message }));
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -60,9 +43,7 @@ exports.resetPassword = async (req, res) => {
   try {
     const { email, newPassword } = req.body;
     const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return res.status(404).json({ error: "Bu email topilmadi" });
-    }
+    if (!user) return res.status(404).json({ error: "Bu email topilmadi" });
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await user.update({ password: hashedPassword });
     res.json({ message: "Parol yangilandi" });
@@ -71,30 +52,13 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-exports.makeAdmin = async (req, res) => {
+exports.createUser = async (req, res) => {
   try {
-    const { email, secret } = req.body;
-    if (secret !== "agmk-secret-2026") {
-      return res.status(403).json({ error: "Ruxsat yo'q" });
-    }
-    const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ error: "Topilmadi" });
-    await user.update({ role: "ADMIN" });
-    res.json({ message: "Admin qilindi", user });
+    const { fullName, email, password, role } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({ fullName, email, password: hashedPassword, role });
+    res.status(201).json({ message: "Foydalanuvchi yaratildi", user: newUser });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
-try {
-  const { fullName, email, password, role } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({
-    fullName,
-    email,
-    password: hashedPassword,
-    role,
-  });
-  res.status(201).json({ message: "Foydalanuvchi yaratildi", user: newUser });
-} catch (error) {
-  res.status(500).json({ error: error.message });
 };
