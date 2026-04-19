@@ -47,13 +47,7 @@ export function LoginPage() {
           <h1 className="text-4xl font-bold text-white mb-2">AGMK</h1>
           <div className="h-1 w-16 bg-accent mx-auto mb-4"></div>
           <h2 className="text-2xl font-semibold text-white mb-4">HR Portal</h2>
-          <p className="text-white/80 text-lg">Karyerangizni biz bilan boshlang.</p>
-          <div className="mt-8 p-4 bg-white/10 rounded-lg text-left space-y-1">
-            <p className="text-white/90 text-sm font-semibold">Test loginlar:</p>
-            <p className="text-white/80 text-sm">Admin: sh@agmk.uz / admin123</p>
-            <p className="text-white/80 text-sm">HR: hr@agmk.uz / hr1234</p>
-            <p className="text-white/80 text-sm">Candidate: testuser@mail.com / newpass123</p>
-          </div>
+
         </div>
       </div>
 
