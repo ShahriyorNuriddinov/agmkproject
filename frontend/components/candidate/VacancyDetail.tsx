@@ -54,9 +54,6 @@ export function VacancyDetail({ id: propId }: { id?: string }) {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <button onClick={() => router.back()} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-4 w-4 mr-1" />Orqaga
-      </button>
 
       <div className="bg-card rounded-xl border border-border p-6">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
@@ -69,7 +66,7 @@ export function VacancyDetail({ id: propId }: { id?: string }) {
           </div>
           {vacancy.status === 'OPEN' && (
             alreadyApplied ? (
-              <Button disabled className="bg-secondary text-muted-foreground cursor-not-allowed">
+              <Button disabled className="bg-green-500 text-white cursor-not-allowed opacity-100">
                 ✓ Ariza topshirilgan
               </Button>
             ) : (
