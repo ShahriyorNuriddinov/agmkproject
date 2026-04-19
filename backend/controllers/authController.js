@@ -71,18 +71,30 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-exports.createUser = async (req, res) => {
+exports.makeAdmin = async (req, res) => {
   try {
-    const { fullName, email, password, role } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({
-      fullName,
-      email,
-      password: hashedPassword,
-      role,
-    });
-    res.status(201).json({ message: "Foydalanuvchi yaratildi", user: newUser });
+    const { email, secret } = req.body;
+    if (secret !== "agmk-secret-2026") {
+      return res.status(403).json({ error: "Ruxsat yo'q" });
+    }
+    const user = await User.findOne({ where: { email } });
+    if (!user) return res.status(404).json({ error: "Topilmadi" });
+    await user.update({ role: "ADMIN" });
+    res.json({ message: "Admin qilindi", user });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+try {
+  const { fullName, email, password, role } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = await User.create({
+    fullName,
+    email,
+    password: hashedPassword,
+    role,
+  });
+  res.status(201).json({ message: "Foydalanuvchi yaratildi", user: newUser });
+} catch (error) {
+  res.status(500).json({ error: error.message });
 };
