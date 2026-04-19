@@ -26,10 +26,13 @@ exports.uploadMiddleware = upload.single("resume");
 exports.applyToJob = async (req, res) => {
   try {
     const { vacancyId, coverLetter } = req.body;
-    const userId = req.user.id; 
+    const userId = req.user.id;
     const resumeUrl = req.file ? req.file.path : null;
 
     if (!resumeUrl) return res.status(400).json({ error: "Fayl yuklanmadi" });
+
+    const existing = await Application.findOne({ where: { userId, vacancyId } });
+    if (existing) return res.status(400).json({ error: "Siz bu vakansiyaga allaqachon ariza topshirgansiz" });
 
     const application = await Application.create({
       userId,

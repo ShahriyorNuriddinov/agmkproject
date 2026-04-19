@@ -55,6 +55,14 @@ export const vacanciesApi = {
     salary: string;
     status: string;
   }) => api.post('/vacancies', data),
+  update: (id: string, data: {
+    title: string;
+    description: string;
+    requirements: string;
+    salary: string;
+    status: string;
+  }) => api.put(`/vacancies/${id}`, data),
+  delete: (id: string) => api.delete(`/vacancies/${id}`),
 };
 
 export const applicationsApi = {

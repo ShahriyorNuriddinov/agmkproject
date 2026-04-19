@@ -36,7 +36,6 @@ export function useMyVacancies(userId: string | undefined) {
     });
 }
 
-// ─── Mutations ─────────────────────────────────────────────
 
 export function useCreateVacancy() {
     const queryClient = useQueryClient();
@@ -50,6 +49,37 @@ export function useCreateVacancy() {
         }) => vacanciesApi.create(data),
         onSuccess: () => {
             toast.success('Vakansiya muvaffaqiyatli yaratildi!');
+            queryClient.invalidateQueries({ queryKey: ['my-vacancies'] });
+            queryClient.invalidateQueries({ queryKey: ['vacancies'] });
+        },
+        onError: (err: any) => {
+            toast.error(err.response?.data?.error || 'Xatolik yuz berdi');
+        },
+    });
+}
+
+export function useUpdateVacancy() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }: { id: string; data: { title: string; description: string; requirements: string; salary: string; status: string } }) =>
+            vacanciesApi.update(id, data),
+        onSuccess: () => {
+            toast.success('Vakansiya yangilandi!');
+            queryClient.invalidateQueries({ queryKey: ['my-vacancies'] });
+            queryClient.invalidateQueries({ queryKey: ['vacancies'] });
+        },
+        onError: (err: any) => {
+            toast.error(err.response?.data?.error || 'Xatolik yuz berdi');
+        },
+    });
+}
+
+export function useDeleteVacancy() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id: string) => vacanciesApi.delete(id),
+        onSuccess: () => {
+            toast.success("Vakansiya o'chirildi!");
             queryClient.invalidateQueries({ queryKey: ['my-vacancies'] });
             queryClient.invalidateQueries({ queryKey: ['vacancies'] });
         },

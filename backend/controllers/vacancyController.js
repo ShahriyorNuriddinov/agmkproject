@@ -2,6 +2,33 @@ const Vacancy = require("../models/Vacancy");
 const User = require("../models/User");
 const VacancyView = require("../models/VacancyView");
 
+exports.updateVacancy = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, requirements, salary, status } = req.body;
+    const vacancy = await Vacancy.findByPk(id);
+    if (!vacancy) return res.status(404).json({ error: "Vakansiya topilmadi" });
+    if (vacancy.userId !== req.user.id) return res.status(403).json({ error: "Ruxsat yo'q" });
+    await vacancy.update({ title, description, requirements, salary, status });
+    res.json({ message: "Yangilandi", vacancy });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.deleteVacancy = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const vacancy = await Vacancy.findByPk(id);
+    if (!vacancy) return res.status(404).json({ error: "Vakansiya topilmadi" });
+    if (vacancy.userId !== req.user.id) return res.status(403).json({ error: "Ruxsat yo'q" });
+    await vacancy.destroy();
+    res.json({ message: "O'chirildi" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 exports.createVacancy = async (req, res) => {
   try {
     const { title, description, requirements, salary, status } = req.body;
