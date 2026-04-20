@@ -49,8 +49,8 @@ export function CandidateDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Xush kelibsiz, {user?.fullName}!</h1>
-        <p className="text-muted-foreground mt-1">Arizalaringiz va vakansiyalar holati</p>
+        <h1 className="text-2xl font-bold text-foreground"> {user?.fullName}!</h1>
+        <p className="text-muted-foreground mt-1">Arizalaringiz va vakansiyalar</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
